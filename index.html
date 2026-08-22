@@ -18,7 +18,7 @@
                          images/share.jpg      (link preview, 1200x630)
                        Missing photos show a labelled placeholder — nothing breaks.
      3. CITY         → search for "Your City" and replace everywhere.
-     4. REVIEWS      → search for "PASTE A REAL REVIEW" (do not ship the placeholders).
+     4. REVIEWS      → optional. See the comment above <div class="reviews">.
      5. TITLE/DESC   → the <title> and og: tags just below.
      ========================================================================== -->
 
@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://YOURDOMAIN.com/images/share.jpg">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0A0612">
-<meta name="build" content="2026-08-22a-standalone">
+<meta name="build" content="2026-08-22c-standalone">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -277,6 +277,7 @@ img.failed + .ph{display:grid}
 .review cite{display:block;margin-top:16px;font-style:normal;
   font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted)}
+.review-cta{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 
 /* ---------- final CTA ---------- */
 .cta-band{position:relative;isolation:isolate;overflow:hidden;
@@ -534,31 +535,34 @@ html:not(.js) .stagger>*{opacity:1;transform:none}
   </div>
 </section>
 
-<!-- ================= REVIEWS =================
-     REPLACE THESE. Copy real reviews from the Facebook page.
-     Do not publish the page with placeholder text below. -->
+<!-- ================= REVIEWS ================= -->
 <section id="reviews">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow">Customers</p>
       <h2>What people say after.</h2>
+      <p>Every review is on our Facebook page, written by the people who booked us —
+        nothing rewritten, nothing collected here.</p>
     </div>
-    <div class="reviews stagger reveal">
-      <div class="review">
-        <p class="stars">★★★★★</p>
-        <p>PASTE A REAL REVIEW FROM THE FACEBOOK PAGE HERE.</p>
-        <cite>— Customer name, City</cite>
-      </div>
-      <div class="review">
-        <p class="stars">★★★★★</p>
-        <p>PASTE A REAL REVIEW FROM THE FACEBOOK PAGE HERE.</p>
-        <cite>— Customer name, City</cite>
-      </div>
-      <div class="review">
-        <p class="stars">★★★★★</p>
-        <p>PASTE A REAL REVIEW FROM THE FACEBOOK PAGE HERE.</p>
-        <cite>— Customer name, City</cite>
-      </div>
+    <!-- ================================================================
+         TO ADD A REAL REVIEW: copy one <div class="review"> block out of the
+         comment below, paste it inside <div class="reviews">, and fill it in.
+         Leave the grid empty until you actually have one — an empty section
+         is fine, invented reviews are not.
+
+         <div class="review">
+           <p class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+           <p>Their words, copied exactly from the Facebook review.</p>
+           <cite>&mdash; First name, City</cite>
+         </div>
+         ================================================================ -->
+    <div class="reviews"></div>
+
+    <div class="review-cta reveal">
+      <a class="btn btn-primary" href="#" data-link="reviews">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>
+        Read our reviews on Facebook
+      </a>
     </div>
   </div>
 </section>
@@ -616,7 +620,7 @@ const SITE = {
 
 // Deploy check: open DevTools console. If this line is missing or the date is old,
 // you are looking at a cached or un-deployed copy — not a code problem.
-console.log('%cDrip Detailing — build 2026-08-22a (standalone)', 'color:#A96BF0;font-weight:700');
+console.log('%cDrip Detailing — build 2026-08-22c (standalone)', 'color:#A96BF0;font-weight:700');
 
 document.documentElement.classList.add('js');
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -624,7 +628,9 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 // Wire up every button
 document.querySelectorAll('[data-link]').forEach(a => {
   const kind = a.dataset.link;
-  a.href = (kind === 'messenger' && SITE.messenger) ? SITE.messenger : SITE.facebook;
+  a.href = kind === 'messenger' && SITE.messenger ? SITE.messenger
+         : kind === 'reviews'                       ? SITE.facebook.replace(/\/$/, '') + '/reviews'
+         : SITE.facebook;
   a.target = '_blank';
   a.rel = 'noopener';
 });
