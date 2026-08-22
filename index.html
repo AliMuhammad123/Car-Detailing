@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ==========================================================================
+     DRIP DETAILING — landing page
+     --------------------------------------------------------------------------
+     EDIT THESE 5 THINGS AND THE PAGE IS LIVE:
+
+     1. LINKS        → the SITE config block in the <script> at the bottom.
+     2. PHOTOS       → drop files into an /images folder next to this file:
+                         images/logo.png
+                         images/before-1.jpg  images/after-1.jpg
+                         images/before-2.jpg  images/after-2.jpg
+                         images/before-3.jpg  images/after-3.jpg
+                         images/share.jpg      (link preview, 1200x630)
+                       Missing photos show a labelled placeholder — nothing breaks.
+     3. CITY         → search for "Your City" and replace everywhere.
+     4. REVIEWS      → search for "PASTE A REAL REVIEW" (do not ship the placeholders).
+     5. TITLE/DESC   → the <title> and og: tags just below.
+     ========================================================================== -->
+
+<title>Drip Detailing — Interior &amp; Exterior Car Detailing</title>
+<meta name="description" content="Full interior and exterior car detailing. See the before and after, then message us for a free quote.">
+<meta property="og:title" content="Drip Detailing — Interior &amp; Exterior Car Detailing">
+<meta property="og:description" content="Full interior and exterior detailing. See the before and after, then message us for a free quote.">
+<meta property="og:image" content="images/share.jpg">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0612">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* Sampled straight off the Drip Detailing logo */
+  --paint:#0A0612;        /* near-black with a violet cast */
+  --paint-2:#150D24;      /* raised surface */
+  --paint-3:#2A1845;      /* borders */
+  --gloss:#A96BF0;        /* logo violet — highlights, accents */
+  --lamp:#E248C8;         /* logo magenta — gradient partner */
+  --violet-deep:#6E2AE4;  /* darkest stop in the wordmark */
+  --gold:#FFC24D;         /* review stars only */
+
+  /* Flame layer — sampled off the lit car panel: violet core, red-magenta heat.
+     For literal orange fire instead, swap these three:
+       --flame-hot:#FFD16A; --flame-mid:#FF6B1A; --flame-low:#B32000;   */
+  --flame-hot:#C77BFF;    /* tip */
+  --flame-mid:#7C2BE1;    /* body */
+  --flame-low:#780D55;    /* red heat at the base */
+  --chrome:#F1ECF7;
+  --muted:#9A87B5;
+
+  --ease-out-soft:cubic-bezier(.22,1,.36,1);
+  --ease-in-out-soft:cubic-bezier(.65,0,.35,1);
+  --dur-micro:200ms;
+  --dur-reveal:700ms;
+  --dur-ambient:30s;
+  --stagger:90ms;
+
+  --wrap:1180px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{
+  background:var(--paint);
+  color:var(--chrome);
+  font:400 17px/1.65 Archivo,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+h1,h2,h3{font-family:"Archivo Black",Archivo,sans-serif;font-weight:400;line-height:1.02;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,6.2vw,4.3rem)}
+h2{font-size:clamp(1.9rem,4.2vw,3rem)}
+h3{font-size:1.12rem;letter-spacing:0}
+p{margin:0}
+
+.eyebrow{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gloss);
+}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px;position:relative;z-index:1}
+section{padding:clamp(64px,9vw,118px) 0}
+
+/* ---------- ambient: showroom lights ---------- */
+.ambient{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.orb{position:absolute;display:block;border-radius:50%;filter:blur(100px);will-change:transform}
+.orb-1{width:46vw;height:46vw;top:-12vw;left:-8vw;opacity:.26;
+  background:radial-gradient(circle,var(--gloss) 0%,transparent 68%);
+  animation:drift-1 var(--dur-ambient) var(--ease-in-out-soft) infinite}
+.orb-2{width:38vw;height:38vw;top:38vh;right:-12vw;opacity:.17;
+  background:radial-gradient(circle,var(--lamp) 0%,transparent 68%);
+  animation:drift-2 calc(var(--dur-ambient)*1.45) var(--ease-in-out-soft) infinite}
+.orb-3{width:32vw;height:32vw;bottom:-10vw;left:26vw;opacity:.14;
+  background:radial-gradient(circle,var(--gloss) 0%,transparent 70%);
+  animation:drift-3 calc(var(--dur-ambient)*1.8) var(--ease-in-out-soft) infinite}
+@keyframes drift-1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(6vw,4vh,0) scale(1.08)}}
+@keyframes drift-2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-5vw,-6vh,0) scale(1.12)}}
+@keyframes drift-3{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(4vw,-3vh,0) scale(.94)}}
+@media(max-width:768px){.orb{filter:blur(56px);opacity:.18}.orb-3{display:none}}
+
+/* ---------- flames ---------- */
+.flames{position:fixed;left:0;right:0;bottom:0;height:52vh;z-index:0;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:linear-gradient(0deg,#000 0 30%,rgba(0,0,0,.65) 62%,transparent 100%);
+  mask-image:linear-gradient(0deg,#000 0 30%,rgba(0,0,0,.65) 62%,transparent 100%)}
+.heat{position:absolute;left:-12%;right:-12%;bottom:-16vh;height:34vh;filter:blur(70px);opacity:.55;
+  background:radial-gradient(ellipse at 50% 100%,var(--flame-low) 0%,var(--flame-mid) 38%,transparent 72%)}
+.flame{position:absolute;bottom:-10%;
+  border-radius:50% 50% 44% 44%/64% 64% 36% 36%;
+  filter:blur(34px);mix-blend-mode:screen;will-change:transform,opacity;
+  transform-origin:50% 100%;
+  background:radial-gradient(58% 68% at 50% 80%,
+             var(--flame-hot) 0%,var(--flame-mid) 40%,var(--flame-low) 62%,transparent 76%);
+  animation:lick var(--t,7s) var(--ease-in-out-soft) var(--d,0s) infinite,
+            flicker calc(var(--t,7s)/2.7) ease-in-out var(--d,0s) infinite}
+@keyframes lick{
+  0%,100%{transform:translate3d(0,6%,0) scaleY(.88) skewX(0deg)}
+  28%    {transform:translate3d(-2%,-5%,0) scaleY(1.14) skewX(-5deg)}
+  55%    {transform:translate3d(2%,-9%,0) scaleY(1.02) skewX(4deg)}
+  78%    {transform:translate3d(-1%,-3%,0) scaleY(1.18) skewX(-2deg)}}
+@keyframes flicker{0%,100%{opacity:.30}40%{opacity:.60}70%{opacity:.42}}
+.f1{left:-6%; width:34vw;height:36vh;--t:7.4s; --d:0s}
+.f2{left:16%; width:26vw;height:44vh;--t:9.1s; --d:-2.3s}
+.f3{left:38%; width:30vw;height:33vh;--t:6.3s; --d:-4.1s}
+.f4{left:58%; width:24vw;height:41vh;--t:10.2s;--d:-1.2s}
+.f5{right:-4%;width:32vw;height:35vh;--t:8.2s; --d:-5.6s}
+@media(max-width:768px){
+  .flames{height:38vh}
+  .flame{filter:blur(24px)}
+  .heat{filter:blur(44px);opacity:.45}
+  .f2,.f4{display:none}
+  .f1,.f3,.f5{width:52vw}
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;
+  padding:15px 26px;border-radius:999px;text-decoration:none;
+  font-weight:700;font-size:.98rem;letter-spacing:.01em;border:1px solid transparent;
+  transition:transform var(--dur-micro) var(--ease-out-soft),
+             box-shadow var(--dur-micro) var(--ease-out-soft),
+             background-color var(--dur-micro) var(--ease-out-soft),
+             border-color var(--dur-micro) var(--ease-out-soft);
+}
+.btn svg{width:19px;height:19px;flex:none}
+.btn-primary{background:linear-gradient(100deg,var(--violet-deep),#C13BE8 55%,var(--lamp));color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(193,59,232,.55)}
+.btn-ghost{border-color:var(--paint-3);color:var(--chrome);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{transform:translateY(-2px);border-color:var(--gloss);background:rgba(169,107,240,.1)}
+.btn:active{transform:translateY(0);transition-duration:80ms}
+.btn:focus-visible{outline:2px solid var(--gloss);outline-offset:3px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);
+  background:rgba(10,6,18,.82);border-bottom:1px solid var(--paint-3)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:13px;padding-bottom:13px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand img{height:34px;width:auto;display:none}
+.brand img.ok{display:block}
+.brand img.ok ~ .mark{display:none}
+.brand .mark{width:34px;height:40px;flex:none}
+.brand-txt{display:flex;flex-direction:column;line-height:1}
+.brand-txt b{font-family:"Archivo Black",sans-serif;font-size:1.02rem;letter-spacing:.06em}
+.brand-txt span{font-family:"JetBrains Mono",monospace;font-size:.56rem;letter-spacing:.2em;color:var(--muted);margin-top:4px}
+.nav .btn{padding:11px 20px;font-size:.88rem}
+@media(max-width:560px){.nav .btn span{display:none}.nav .btn{padding:11px 16px}}
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(44px,6vw,78px)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,4.5vw,62px);align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:38px}}
+.hero h1{margin:18px 0 0}
+.hero h1 em{font-style:normal;color:var(--gloss)}
+.hero-sub{color:var(--muted);font-size:1.09rem;margin-top:20px;max-width:44ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero-note{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.1em;
+  color:var(--muted);margin-top:18px;text-transform:uppercase}
+
+/* ---------- before / after slider (the signature) ---------- */
+.ba{
+  position:relative;aspect-ratio:3/2;border-radius:16px;overflow:hidden;
+  background:var(--paint-2);border:1px solid var(--paint-3);
+  --pos:50%;
+  box-shadow:0 30px 70px -40px rgba(0,0,0,.9);
+  touch-action:pan-y;
+}
+.ba-pane{position:absolute;inset:0}
+.ba-pane img{width:100%;height:100%;object-fit:cover}
+.ba-before{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;
+  background:linear-gradient(180deg,transparent,var(--gloss) 12%,var(--gloss) 88%,transparent);
+  box-shadow:0 0 22px rgba(169,107,240,.7);transform:translateX(-1px);z-index:2;pointer-events:none}
+.ba-grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  background:var(--chrome);color:var(--paint);font-size:15px;font-weight:700;
+  box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.ba input[type=range]{
+  position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:3;
+  -webkit-appearance:none;appearance:none;background:transparent;cursor:ew-resize;
+}
+.ba input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:52px;height:100%;cursor:ew-resize}
+.ba input[type=range]::-moz-range-thumb{width:52px;height:1000px;border:0;background:transparent;cursor:ew-resize}
+.ba input[type=range]:focus-visible{outline:2px solid var(--gloss);outline-offset:-2px}
+.tag{position:absolute;top:14px;z-index:2;pointer-events:none;
+  font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:6px 11px;border-radius:999px;backdrop-filter:blur(6px)}
+.tag-before{left:14px;background:rgba(10,6,18,.85);color:var(--chrome);border:1px solid rgba(255,255,255,.18)}
+.tag-after{right:14px;background:var(--gloss);color:var(--paint);font-weight:700}
+
+/* photo placeholder — shows only if the image file is missing */
+.ph{display:none;position:absolute;inset:0;place-content:center;text-align:center;gap:9px;
+  background:
+    repeating-linear-gradient(45deg,rgba(255,255,255,.028) 0 12px,transparent 12px 24px),
+    var(--paint-2);
+  font-family:"JetBrains Mono",monospace;padding:20px}
+.ph b{display:block;font-size:.78rem;letter-spacing:.22em;color:var(--gloss)}
+.ph span{display:block;font-size:.7rem;color:var(--muted);word-break:break-all}
+img.failed{display:none}
+img.failed + .ph{display:grid}
+
+/* ---------- trust strip ---------- */
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--paint-3);
+  border:1px solid var(--paint-3);border-radius:14px;overflow:hidden;margin-top:clamp(48px,6vw,72px)}
+.trust div{background:var(--paint);padding:22px 18px;text-align:center}
+.trust b{display:block;font-family:"Archivo Black",sans-serif;font-size:1.5rem;color:var(--gloss)}
+.trust span{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted)}
+@media(max-width:640px){.trust{grid-template-columns:1fr 1fr}}
+
+/* ---------- work gallery ---------- */
+.sec-head{max-width:60ch;margin-bottom:clamp(34px,4vw,54px)}
+.sec-head h2{margin-top:14px}
+.sec-head p{color:var(--muted);margin-top:16px}
+.work{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:26px}
+.work .ba{aspect-ratio:3/2}
+.work-item figcaption{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin:14px 2px 0}
+.work-item{margin:0}
+
+/* ---------- services ---------- */
+.svc{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:860px){.svc{grid-template-columns:1fr}}
+.card{background:var(--paint-2);border:1px solid var(--paint-3);border-radius:16px;
+  padding:clamp(26px,3vw,38px);position:relative;overflow:hidden;
+  transition:transform var(--dur-micro) var(--ease-out-soft),
+             border-color var(--dur-micro) var(--ease-out-soft)}
+.card:hover{transform:translateY(-4px);border-color:rgba(169,107,240,.45)}
+.card h3{margin:16px 0 0;font-family:"Archivo Black",sans-serif;font-size:1.45rem;letter-spacing:-.01em}
+.card ul{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:11px}
+.card li{position:relative;padding-left:26px;color:var(--muted);font-size:.97rem}
+.card li::before{content:"";position:absolute;left:0;top:.6em;width:9px;height:9px;border-radius:50%;
+  background:var(--gloss);box-shadow:0 0 12px rgba(169,107,240,.7)}
+
+/* ---------- process ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+.step{border-top:2px solid var(--paint-3);padding-top:22px}
+.step .n{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.2em;color:var(--lamp)}
+.step h3{margin:12px 0 8px;font-size:1.3rem;font-family:"Archivo Black",sans-serif}
+.step p{color:var(--muted);font-size:.97rem}
+
+/* ---------- reviews ---------- */
+.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.review{background:var(--paint-2);border:1px solid var(--paint-3);border-radius:16px;padding:28px}
+.stars{color:var(--gold);letter-spacing:.15em;font-size:.9rem}
+.review p{margin:14px 0 0;font-size:1rem}
+.review cite{display:block;margin-top:16px;font-style:normal;
+  font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted)}
+
+/* ---------- final CTA ---------- */
+.cta-band{position:relative;isolation:isolate;overflow:hidden;
+  background:linear-gradient(135deg,var(--paint-2),rgba(169,107,240,.13));
+  border:1px solid var(--paint-3);border-radius:22px;padding:clamp(38px,5.5vw,68px);text-align:center}
+/* Your own brand photo, dimmed hard so the copy stays readable */
+.cta-band::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:url("images/texture.jpg") center/cover no-repeat;opacity:.5}
+.cta-band::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,6,18,.86),rgba(10,6,18,.94))}
+.cta-band p{color:var(--muted);margin:18px auto 0;max-width:52ch}
+.cta-band .hero-cta{justify-content:center;margin-top:32px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--paint-3);padding:36px 0 34px;font-size:.88rem;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+footer a{color:var(--gloss);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* ---------- sticky mobile CTA ---------- */
+.dock{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;
+  padding:11px 14px calc(11px + env(safe-area-inset-bottom));
+  background:rgba(10,6,18,.95);backdrop-filter:blur(12px);border-top:1px solid var(--paint-3)}
+.dock .btn{width:100%}
+@media(max-width:720px){.dock{display:block}body{padding-bottom:82px}}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translate3d(0,20px,0) scale(.985);
+  transition:opacity var(--dur-reveal) var(--ease-out-soft),transform var(--dur-reveal) var(--ease-out-soft)}
+.reveal.is-visible{opacity:1;transform:none}
+html:not(.js) .reveal{opacity:1;transform:none}
+.stagger>*{opacity:0;transform:translate3d(0,18px,0);
+  transition:opacity var(--dur-reveal) var(--ease-out-soft),transform var(--dur-reveal) var(--ease-out-soft)}
+html:not(.js) .stagger>*{opacity:1;transform:none}
+.stagger.is-visible>*{opacity:1;transform:none}
+.stagger.is-visible>*:nth-child(2){transition-delay:calc(var(--stagger)*1)}
+.stagger.is-visible>*:nth-child(3){transition-delay:calc(var(--stagger)*2)}
+.stagger.is-visible>*:nth-child(4){transition-delay:calc(var(--stagger)*3)}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .reveal,.stagger>*{opacity:1!important;transform:none!important}
+  .flame{opacity:.4!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <span class="orb orb-1"></span><span class="orb orb-2"></span><span class="orb orb-3"></span>
+</div>
+
+<div class="flames" aria-hidden="true">
+  <span class="heat"></span>
+  <span class="flame f1"></span><span class="flame f2"></span><span class="flame f3"></span>
+  <span class="flame f4"></span><span class="flame f5"></span>
+</div>
+
+<!-- ================= NAV ================= -->
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <!-- Swap in the real logo: images/logo.png. Falls back to this mark if missing. -->
+      <img src="images/logo.png" alt="Drip Detailing" id="logo">
+      <svg class="mark" viewBox="0 0 34 40" fill="none" aria-hidden="true">
+        <path d="M17 1C17 1 3 17.5 3 26.2 3 33.8 9.3 39 17 39s14-5.2 14-12.8C31 17.5 17 1 17 1z"
+              fill="none" stroke="#A96BF0" stroke-width="2.2"/>
+        <path d="M17 9C17 9 9 19.4 9 25.6c0 4.3 3.6 7.6 8 7.6" stroke="#E248C8" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt"><b>DRIP DETAILING</b><span>WHERE EVERY DROP SHINES</span></span>
+    </a>
+    <a class="btn btn-primary" href="#quote" data-link="messenger">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.3 2 2 6.2 2 11.7c0 3.1 1.4 5.9 3.7 7.7v3.8l3.4-1.9c.9.3 1.9.4 2.9.4 5.7 0 10-4.2 10-9.7S17.7 2 12 2zm1 13.1-2.5-2.7-4.9 2.7 5.4-5.7 2.6 2.7 4.8-2.7-5.4 5.7z"/></svg>
+      Free quote<span>&nbsp;on Messenger</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Where every drop shines · Your City, USA</p>
+        <h1>Your car hasn't looked this good <em>since the lot.</em></h1>
+        <p class="hero-sub">
+          Full interior deep clean and exterior hand detail. Drag the slider — that's
+          real work, not a stock photo. Send us a message and we'll quote your vehicle for free.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#quote" data-link="messenger">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.3 2 2 6.2 2 11.7c0 3.1 1.4 5.9 3.7 7.7v3.8l3.4-1.9c.9.3 1.9.4 2.9.4 5.7 0 10-4.2 10-9.7S17.7 2 12 2zm1 13.1-2.5-2.7-4.9 2.7 5.4-5.7 2.6 2.7 4.8-2.7-5.4 5.7z"/></svg>
+            Get my free quote
+          </a>
+          <a class="btn btn-ghost" href="#" data-link="facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>
+            See more on Facebook
+          </a>
+        </div>
+        <p class="hero-note">Free quotes · Interior + exterior · Booked by message</p>
+      </div>
+
+      <!-- HERO BEFORE / AFTER -->
+      <div class="ba" data-ba>
+        <div class="ba-pane ba-after">
+          <img src="images/after-1.jpg" alt="Black Toyota Corolla after a full exterior detail" data-fallback>
+          <span class="ph"><b>AFTER</b><span>images/after-1.jpg</span></span>
+        </div>
+        <div class="ba-pane ba-before">
+          <img src="images/before-1.jpg" alt="The same Corolla before detailing, covered in road grime" data-fallback>
+          <span class="ph"><b>BEFORE</b><span>images/before-1.jpg</span></span>
+          <span class="tag tag-before">Before</span>
+        </div>
+        <span class="tag tag-after">After</span>
+        <span class="ba-line"><span class="ba-grip">⇄</span></span>
+        <input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after">
+      </div>
+    </div>
+
+    <div class="trust stagger reveal">
+      <!-- Only keep claims that are actually true. Delete or edit freely. -->
+      <div><b>Free</b><span>Quote by message</span></div>
+      <div><b>Hand</b><span>Washed, never machine</span></div>
+      <div><b>In &amp; out</b><span>Full detail available</span></div>
+      <div><b>USA</b><span>Local business</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= THE WORK ================= -->
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">The work</p>
+      <h2>Drag the line. That's the difference.</h2>
+      <p>Same Corolla, up close. It rolled in under a winter's worth of road grime and
+        left with the paint reflecting again. Nothing here is retouched.</p>
+    </div>
+
+    <!-- ADD AN INTERIOR PAIR NEXT: shoot before/after of a driver's seat and carpet
+         from the exact same position, save as images/before-4.jpg + images/after-4.jpg,
+         then copy one <figure class="work-item"> block below and point it at those files. -->
+    <div class="work">
+      <figure class="work-item reveal">
+        <div class="ba" data-ba>
+          <div class="ba-pane ba-after">
+            <img src="images/after-2.jpg" alt="Front end after detailing — clear headlight and gloss paint" data-fallback loading="lazy">
+            <span class="ph"><b>AFTER</b><span>images/after-2.jpg</span></span>
+          </div>
+          <div class="ba-pane ba-before">
+            <img src="images/before-2.jpg" alt="Front end before detailing — dulled headlight and dirt-covered bumper" data-fallback loading="lazy">
+            <span class="ph"><b>BEFORE</b><span>images/before-2.jpg</span></span>
+            <span class="tag tag-before">Before</span>
+          </div>
+          <span class="tag tag-after">After</span>
+          <span class="ba-line"><span class="ba-grip">⇄</span></span>
+          <input type="range" min="0" max="100" value="50" aria-label="Drag to compare the front end before and after">
+        </div>
+        <figcaption>Front end — grime lifted, headlights cleared</figcaption>
+      </figure>
+
+      <figure class="work-item reveal">
+        <div class="ba" data-ba>
+          <div class="ba-pane ba-after">
+            <img src="images/after-3.jpg" alt="Door and mirror after detailing" data-fallback loading="lazy">
+            <span class="ph"><b>AFTER</b><span>images/after-3.jpg</span></span>
+          </div>
+          <div class="ba-pane ba-before">
+            <img src="images/before-3.jpg" alt="Door and mirror before detailing, heavy dirt on the paint and glass" data-fallback loading="lazy">
+            <span class="ph"><b>BEFORE</b><span>images/before-3.jpg</span></span>
+            <span class="tag tag-before">Before</span>
+          </div>
+          <span class="tag tag-after">After</span>
+          <span class="ba-line"><span class="ba-grip">⇄</span></span>
+          <input type="range" min="0" max="100" value="50" aria-label="Drag to compare the door and mirror before and after">
+        </div>
+        <figcaption>Door &amp; mirror — paint back to a full reflection</figcaption>
+      </figure>
+    </div>
+
+    <p style="margin-top:30px" class="reveal">
+      <a class="btn btn-ghost" href="#" data-link="facebook">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>
+        See the full gallery on Facebook
+      </a>
+    </p>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">What's included</p>
+      <h2>Two services. Take one or both.</h2>
+    </div>
+
+    <div class="svc stagger reveal">
+      <div class="card">
+        <p class="eyebrow">01 — Inside</p>
+        <h3>Interior detail</h3>
+        <ul>
+          <li>Full vacuum — seats, carpets, trunk, under the seats</li>
+          <li>Shampoo and hot-water extraction on cloth seats and mats</li>
+          <li>Leather cleaned and conditioned</li>
+          <li>Dash, console, vents, cup holders and door panels degreased</li>
+          <li>Pet hair and stain removal</li>
+          <li>Odor treatment — smoke, food, damp</li>
+          <li>Interior glass streak-free</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <p class="eyebrow">02 — Outside</p>
+        <h3>Exterior detail</h3>
+        <ul>
+          <li>Foam pre-soak and two-bucket hand wash</li>
+          <li>Wheels, barrels and tires deep cleaned, tires dressed</li>
+          <li>Bug, tar and road grime removal</li>
+          <li>Clay bar decontamination for smooth paint</li>
+          <li>Hand wax or sealant for gloss and protection</li>
+          <li>Trim and plastics restored</li>
+          <li>Glass, mirrors and door jambs finished</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESS ================= -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">How it works</p>
+      <h2>Three messages and it's booked.</h2>
+    </div>
+    <div class="steps stagger reveal">
+      <div class="step">
+        <p class="n">STEP 01</p>
+        <h3>Send a photo</h3>
+        <p>Message us on Facebook with a couple of pictures of your car — inside and out. Takes a minute.</p>
+      </div>
+      <div class="step">
+        <p class="n">STEP 02</p>
+        <h3>Get a price</h3>
+        <p>We reply with a firm quote and the next open slot. No callbacks, no pressure, no surprise charges.</p>
+      </div>
+      <div class="step">
+        <p class="n">STEP 03</p>
+        <h3>Pick it up clean</h3>
+        <p>You get before and after photos of your own car when the job's done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REVIEWS =================
+     REPLACE THESE. Copy real reviews from the Facebook page.
+     Do not publish the page with placeholder text below. -->
+<section id="reviews">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Customers</p>
+      <h2>What people say after.</h2>
+    </div>
+    <div class="reviews stagger reveal">
+      <div class="review">
+        <p class="stars">★★★★★</p>
+        <p>PASTE A REAL REVIEW FROM THE FACEBOOK PAGE HERE.</p>
+        <cite>— Customer name, City</cite>
+      </div>
+      <div class="review">
+        <p class="stars">★★★★★</p>
+        <p>PASTE A REAL REVIEW FROM THE FACEBOOK PAGE HERE.</p>
+        <cite>— Customer name, City</cite>
+      </div>
+      <div class="review">
+        <p class="stars">★★★★★</p>
+        <p>PASTE A REAL REVIEW FROM THE FACEBOOK PAGE HERE.</p>
+        <cite>— Customer name, City</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section id="quote">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <p class="eyebrow">Free quote</p>
+      <h2 style="margin-top:14px">Tell us what you're driving.</h2>
+      <p>Send a photo on Messenger and we'll come back with a price and a time.
+        Interior, exterior, or the full detail — your call.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#" data-link="messenger">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.3 2 2 6.2 2 11.7c0 3.1 1.4 5.9 3.7 7.7v3.8l3.4-1.9c.9.3 1.9.4 2.9.4 5.7 0 10-4.2 10-9.7S17.7 2 12 2zm1 13.1-2.5-2.7-4.9 2.7 5.4-5.7 2.6 2.7 4.8-2.7-5.4 5.7z"/></svg>
+          Message us for a free quote
+        </a>
+        <a class="btn btn-ghost" href="#" data-link="facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>
+          Visit our Facebook page
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Drip Detailing — where every drop shines. Interior &amp; exterior detailing, Your City, USA.</span>
+    <span><a href="#" data-link="facebook">Facebook</a> · <a href="#" data-link="messenger">Messenger</a></span>
+  </div>
+</footer>
+
+<div class="dock">
+  <a class="btn btn-primary" href="#" data-link="messenger">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.3 2 2 6.2 2 11.7c0 3.1 1.4 5.9 3.7 7.7v3.8l3.4-1.9c.9.3 1.9.4 2.9.4 5.7 0 10-4.2 10-9.7S17.7 2 12 2zm1 13.1-2.5-2.7-4.9 2.7 5.4-5.7 2.6 2.7 4.8-2.7-5.4 5.7z"/></svg>
+    Get a free quote
+  </a>
+</div>
+
+<script>
+/* ==========================================================
+   1. EDIT YOUR LINKS HERE
+   ========================================================== */
+const SITE = {
+  // Facebook page — clean URL (not the share/... link, and not web.facebook.com,
+  // which forces the desktop site on phones).
+  facebook : "https://www.facebook.com/Dripdetailing2",
+
+  // Messenger deep link. On a phone this opens the Messenger app straight into a
+  // chat with the page; on desktop it opens messenger.com.
+  messenger: "https://m.me/Dripdetailing2"
+};
+/* ========================================================== */
+
+document.documentElement.classList.add('js');
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Wire up every button
+document.querySelectorAll('[data-link]').forEach(a => {
+  const kind = a.dataset.link;
+  a.href = (kind === 'messenger' && SITE.messenger) ? SITE.messenger : SITE.facebook;
+  a.target = '_blank';
+  a.rel = 'noopener';
+});
+
+// Before/after sliders
+document.querySelectorAll('[data-ba]').forEach(ba => {
+  const range = ba.querySelector('input[type=range]');
+  const set = v => ba.style.setProperty('--pos', v + '%');
+  set(range.value);
+  range.addEventListener('input', () => set(range.value));
+});
+
+// Missing photos fall back to a labelled placeholder instead of a broken icon
+document.querySelectorAll('img[data-fallback]').forEach(img => {
+  const fail = () => img.classList.add('failed');
+  img.addEventListener('error', fail);
+  if (img.complete && img.naturalWidth === 0) fail();
+});
+
+// Real logo replaces the built-in mark only once it actually loads
+const logo = document.getElementById('logo');
+const showLogo = () => logo.classList.add('ok');
+logo.addEventListener('load', showLogo);
+if (logo.complete && logo.naturalWidth > 0) showLogo();
+
+// Scroll reveals
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const items = document.querySelectorAll('.reveal, .stagger');
+if (reduced || !('IntersectionObserver' in window)) {
+  items.forEach(el => el.classList.add('is-visible'));
+} else {
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.classList.add('is-visible');
+      io.unobserve(e.target);
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  items.forEach(el => io.observe(el));
+  setTimeout(() => items.forEach(el => el.classList.add('is-visible')), 4000); // safety net
+}
+</script>
+</body>
+</html>
